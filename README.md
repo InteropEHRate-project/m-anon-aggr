@@ -1,1 +1,1 @@
-# m-anonymization-aggregation
+# InteropEHRate Anonymization and Aggregation Mobile Library
