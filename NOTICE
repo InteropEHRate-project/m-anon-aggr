@@ -1,0 +1,15 @@
+=========================================================================
+==  Apache License, Version 2.0,                                       ==
+==  InteropEHRate Data Anonymization and Pseudonymization Library      ==
+=========================================================================
+
+InteropEHRate Data Anonymization and Pseudonymization Library
+Copyright 2021 BYTE, S.A.
+
+This product includes software developed for 
+The InteropEHRate project (https://interopehrate.eu/).
+
+Portions of this software were developed by BYTE S.A. from Greece.
+
+This software contains code derived from OkHttp, Retrofit and standard Java libraries, 
+including various modifications by BYTE S.A.
