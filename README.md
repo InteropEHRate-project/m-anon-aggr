@@ -2,8 +2,26 @@
 
 ## Description
 
-The Data Anonymization and Data Pseudonymization library has been implemented in Java programming language and can be utilized by any Android application. The aim of the library is to either anonymize or pseudonymize the personal data *– and more specifically the health data –* of the data subjects whenever they want to participate in a research study.
+The Data Anonymization and Data Pseudonymization Library has been implemented in Java programming language and can be utilized by any Android application. The aim of the library is to either anonymize or pseudonymize the personal data *– and more specifically the health data –* of the data subjects whenever they want to participate in a research study.
 
+## Installation Guide
+
+In order to integrate the Data Anonymization and Data Pseudonymization Library there are some steps which should be followed.
+
+1.	In case of a Gradle project, the following line should be appended in the dependencies section of the **build.gradle** file:
+```
+implementation(group:'eu.interopehrate', name:'rdsanoni', version: '0.1.1')
+```
+
+2. In case of a Maven project, the same dependency should be expressed with the following Maven syntax:
+ ```
+<dependency>
+    <groupId>eu.interopehrate</groupId>
+    <artifactId>rdsanoni</artifactId>
+    <version>0.1.1</version>
+</dependency>
+ ```
+ 
 ## Methods
 
 The Data Anonymization and Data Pseudonymization Library is deployed at the citizens mobile phone *– by the S-EHR application –* and has five methods.
@@ -47,10 +65,11 @@ It pseudonymizes the citizen’s dataset.
  <ins>Parameters:</ins>
   * the _**data**_, which will get pseudonymized,
   * the _**fileType**_, which is the type of the data file, and
-  * the _**studyID**_, which is the ID of the current research study.
+  * the _**studyID**_, which is the ID of the current research study (*).
+  
+ (*) The studyID variable is utilized in order for the library to call getPseudo and retrieve the pseudo-identity/pseudonym from the citizen’s mobile phone.
  
  <ins>Response:</ins> The pseudonymized dataset.
-
 
 #### **anonymizeData**
 
