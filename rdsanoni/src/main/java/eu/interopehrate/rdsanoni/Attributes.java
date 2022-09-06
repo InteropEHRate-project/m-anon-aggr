@@ -42,10 +42,15 @@ public class Attributes {
         add("suffix");
         add("period");
         add("telecom");
-        add("gender");
+        //add("gender");
         add("birthDate");
         add("deceasedDateTime");
         add("address");
+        add("line");
+        add("city");
+        add("district");
+        add("state");
+        add("postalCode");
         add("maritalStatus");
         add("multipleBirthBoolean");
         add("multipleBirthInteger");
@@ -83,7 +88,6 @@ public class Attributes {
     public static final ArrayList<String> attachment = new ArrayList<String>() {{
         add("id");
         add("extension");
-        //add("data");
         add("url");
         add("creation");
 
@@ -91,7 +95,6 @@ public class Attributes {
 
     public static final ArrayList<String> composition = new ArrayList<String>() {{
         add("section");
-        //asdfghj
         add("id");
         add("meta");
         add("text");
@@ -141,6 +144,7 @@ public class Attributes {
         add("basedOn");
         add("groupIdentifier");
         add("insurance");
+        add("note");
         add("dispenseRequest");
         add("validityPeriod");
         add("priorPrescription");
@@ -215,7 +219,6 @@ public class Attributes {
         add("relation");
         add("url");
         add("signature");
-        add("reference");
 
     }};
 
@@ -271,7 +274,7 @@ public class Attributes {
         add("suffix");
         add("period");
         add("telecom");
-        add("gender");
+        //add("gender");
         add("birthDate");
         add("address");
         add("photo");
@@ -344,7 +347,6 @@ public class Attributes {
         add("effectiveDateTime");
         add("effectivePeriod");
         add("issued");
-        //add("performer");
         add("note");
         add("specimen");
         add("device");
@@ -420,7 +422,6 @@ public class Attributes {
         add("location");
         add("performer");
         add("productReference");
-        //add("description");
         add("note");
 
     }};
@@ -446,6 +447,71 @@ public class Attributes {
 
     }};
 
+    public static final ArrayList<String> immunization = new ArrayList<String>() {{
+        add("id");
+        add("meta");
+        add("text");
+        add("contained");
+        add("extension");
+        add("modifierExtension");
+        add("identifier");
+        add("patient");
+        add("reference");
+        add("display");
+        add("encounter");
+        add("occurrenceDateTime");
+        add("occurrenceString");
+        add("recorded");
+        add("location");
+        add("actor");
+        add("note");
+        add("reasonReference");
+        add("documentType");
+        add("presentationDate");
+        add("date");
+        add("detail");
+        add("authority");
+
+    }};
+
+    public static final ArrayList<String> medicationStatement = new ArrayList<String>() {{
+        add("id");
+        add("meta");
+        add("text");
+        add("contained");
+        add("extension");
+        add("modifierExtension");
+        add("identifier");
+        add("basedOn");
+        add("partOf");
+        add("subject");
+        add("reference");
+        add("type");
+        add("display");
+        add("context");
+        add("effectiveDateTime");
+        add("effectivePeriod");
+        add("dateAsserted");
+        add("informationSource");
+        add("derivedFrom");
+        add("reasonReference");
+        add("note");
+
+    }};
+
+    public static final ArrayList<String> medication = new ArrayList<String>() {{
+        add("id");
+        add("meta");
+        add("text");
+        add("contained");
+        add("extension");
+        add("modifierExtension");
+        add("identifier");
+        add("manufacturer");
+        add("reference");
+
+    }};
+
     public static final ArrayList<String> other = new ArrayList<String>() {{
         add("id");
         add("meta");
@@ -456,10 +522,33 @@ public class Attributes {
         add("identifier");
         add("reference");
         add("name");
-        add("gender");
+        //add("gender");
         add("address");
 
     }};
+
+    public static final ArrayList<String> allergyIntolerance = new ArrayList<String>() {{
+        add("id");
+        add("meta");
+        add("text");
+        add("contained");
+        add("extension");
+        add("modifierExtension");
+        add("identifier");
+        add("patient");
+        add("reference");
+        add("encounter");
+        add("onsetDateTime");
+        add("recordedDate");
+        add("recorder");
+        add("asserter");
+        add("lastOccurrence");
+        add("note");
+        add("description");
+        add("onset");
+
+    }};
+
 
     public static final HashMap<String, ArrayList<String>> attributesPerProfile = new HashMap<String, ArrayList<String>>() {{
         put("DiagnosticReport", diagnosticReport);
@@ -480,7 +569,11 @@ public class Attributes {
         put("Condition", condition);
         put("CarePlan", carePlan);
         put("Provenance", provenance);
+        put("Immunization", immunization);
+        put("MedicationStatement", medicationStatement);
+        put("Medication", medication);
         put("Other", other);
+        put("AllergyIntolerance", allergyIntolerance);
     }};
 
 }

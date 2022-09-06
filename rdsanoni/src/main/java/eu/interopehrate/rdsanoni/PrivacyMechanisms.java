@@ -137,6 +137,7 @@ public class PrivacyMechanisms implements RDSAnonI {
             }
 
             pseudonymizedData =  pseudonymizedData.replaceAll("\"addNewExtensionHere\":","\"extension\":");
+            pseudonymizedData = deleteEmptyPairs(pseudonymizedData);
             pseudonymizedData = beautifyJSON(pseudonymizedData);
 
             end(startTime);
@@ -200,11 +201,18 @@ public class PrivacyMechanisms implements RDSAnonI {
         }
 
         anonymizedData =  anonymizedData.replaceAll("\"addNewExtensionHere\":","\"extension\":");
+        anonymizedData = deleteEmptyPairs(anonymizedData);
         anonymizedData = beautifyJSON(anonymizedData);
 
         end(startTime);
-        //System.out.println(anonymizedData);
 
+        return anonymizedData;
+    }
+
+    private String deleteEmptyPairs(String anonymizedData) {
+        String brackets = "\\{"+"\\}";
+        anonymizedData = anonymizedData.replaceAll(brackets, String.valueOf(JSONObject.NULL));
+        anonymizedData = beautifyJSON(anonymizedData);
         return anonymizedData;
     }
 
@@ -309,7 +317,7 @@ public class PrivacyMechanisms implements RDSAnonI {
             value = anonymizeAddress(entry);
         } else if (key.equals("reference")) {
             value = "\"" + setReferenceValue(entry) + "\"";
-        } else if (key.equals("subject") || key.equals("link") || key.equals("targetReference") || key.equals("requester") || (key.equals("target") && !profile.equals("Provenance")) || key.equals("who") || key.equals("observer") || key.equals("condition") || key.equals("what") || key.equals("other") || (key.equals("encounter") && profile.equals("CarePlan")) || (key.equals("author") && profile.equals("CarePlan")) || (key.equals("author") && !profile.equals("DocumentReference"))) {
+        } else if (key.equals("subject") || key.equals("link") || key.equals("targetReference") || key.equals("requester") || (key.equals("target") && !profile.equals("Provenance")) || key.equals("who") || key.equals("observer") || key.equals("condition") || key.equals("what") || key.equals("other") || (key.equals("encounter") && profile.equals("CarePlan")) || (key.equals("author") && profile.equals("CarePlan")) || (key.equals("author") && !profile.equals("DocumentReference")) || key.equals("patient") || key.equals("actor")) {
             value = anonymizeReferenceObject(entry);
         } else if (key.equals("identifier") || key.equals("masterIdentifier") || key.equals("targetIdentifier") || key.equals("preAdmissionIdentifier")) {
             value = anonymizeIdentifier(entry);
@@ -317,7 +325,7 @@ public class PrivacyMechanisms implements RDSAnonI {
             value = "unknown";
         } else if((key.equals("when") && profile.equals("Signature")) || (key.equals("recorded") && profile.equals("Provenance")) || (key.equals("recorded") && profile.equals("AuditEvent")) || key.equals("timestamp") || (key.equals("lastModified") && profile.equals("BundleEntry")) || (key.equals("date") && profile.equals("DocumentReference"))) {
             value = "\"" + setRandomDateTime() + "\"";
-        } else if (key.equals("birthDate") || key.equals("effectiveDateTime") || key.equals("deceasedDateTime") || key.equals("created") || key.equals("date") || key.equals("authoredOn") || key.equals("recorded") || key.equals("onsetDateTime")) {
+        } else if (key.equals("birthDate") || key.equals("effectiveDateTime") || key.equals("deceasedDateTime") || key.equals("created") || key.equals("date") || key.equals("authoredOn") || key.equals("recorded") || key.equals("onsetDateTime") || key.equals("occurrenceDateTime")) {
             String dateTime = entry.getValue().toString();
             value = anonymizeDateTime(dateTime);
             value = "\"" + value + "\"";
@@ -408,6 +416,33 @@ public class PrivacyMechanisms implements RDSAnonI {
         return jsonArray;
     }
 
+    private String replaceID(String oldValue, String firstCharacter, String secondCharacter) {
+        String newValue = "";
+
+        if(oldValue.contains("/")) {
+            if (!firstCharacter.equals("") && !secondCharacter.equals("")) {
+                //String firstCharacter = "\"";
+                //String secondCharacter = "/";
+                int start = oldValue.indexOf(firstCharacter) + 1;
+                int end = oldValue.lastIndexOf(secondCharacter) + 1;
+                newValue = oldValue.substring(start, end) + assignNewID(oldValue.substring(end));
+            } else if(!firstCharacter.equals("")) {
+                //String firstCharacter = "/";
+                int start = oldValue.lastIndexOf(firstCharacter) + 1;
+                newValue = oldValue.substring(start);
+            } else if(!secondCharacter.equals("")){
+                //String secondCharacter = "/";
+                int end = oldValue.lastIndexOf(secondCharacter) + 1;
+                newValue = oldValue.substring(0, end) + assignNewID(oldValue.substring(end));
+            }
+        } else {
+            newValue = assignNewID(oldValue);
+        }
+
+
+        return newValue;
+    }
+
     private String setReferenceValue(Map.Entry<String, JsonElement> entry) throws JSONException {
         String oldValue = entry.getValue().toString();
         String newValue = "";
@@ -417,14 +452,19 @@ public class PrivacyMechanisms implements RDSAnonI {
                     JSONObject reference = new JSONObject(oldValue);
                     if(reference.has("reference")){
                         oldValue = reference.get("reference").toString();
-                        int end = oldValue.lastIndexOf("/") + 1;
-                        newValue = oldValue.substring(0, end) + assignNewID(oldValue.substring(end));
+                        //int end = oldValue.lastIndexOf("/") + 1;
+                        //newValue = oldValue.substring(0, end) + assignNewID(oldValue.substring(end));
+                        String secondCharacter = "/";
+                        newValue = replaceID(oldValue, "", secondCharacter);
                     }
                 }
             } else {
-                int start = oldValue.indexOf("\"") + 1;
-                int end = oldValue.lastIndexOf("/") + 1;
-                newValue = oldValue.substring(start, end) + assignNewID(oldValue.substring(end));
+                //int start = oldValue.indexOf("\"") + 1;
+                //int end = oldValue.lastIndexOf("/") + 1;
+                //newValue = oldValue.substring(start, end) + assignNewID(oldValue.substring(end));
+                String firstCharacter = "\"";
+                String secondCharacter = "/";
+                newValue = replaceID(oldValue, firstCharacter, secondCharacter);
             }
         }
 
@@ -433,9 +473,12 @@ public class PrivacyMechanisms implements RDSAnonI {
 
     private String setFullUrlValue(Map.Entry<String, JsonElement> entry) {
         String oldValue = entry.getValue().toString();
-        int start = oldValue.indexOf("\"") + 1;
-        int end = oldValue.lastIndexOf("/") + 1;
-        String newValue = oldValue.substring(start, end) + assignNewID(oldValue.substring(end));
+        //int start = oldValue.indexOf("\"") + 1;
+        //int end = oldValue.lastIndexOf("/") + 1;
+        //String newValue = oldValue.substring(start, end) + assignNewID(oldValue.substring(end));
+        String firstCharacter = "\"";
+        String secondCharacter = "/";
+        String newValue = replaceID(oldValue, firstCharacter, secondCharacter);
 
         return newValue;
     }
@@ -728,8 +771,10 @@ public class PrivacyMechanisms implements RDSAnonI {
         String json = "";
         for(int i = 0; i < target.length(); i++) {
             String reference = target.getJSONObject(i).get("reference").toString();
-            int start = reference.lastIndexOf("/") + 1;
-            String profileID = reference.substring(start);
+            //int start = reference.lastIndexOf("/") + 1;
+            //String profileID = reference.substring(start);
+            String firstCharacter = "/";
+            String profileID = replaceID(reference, firstCharacter, "");
             System.out.println(reference);
             if (anonDataPerResource.containsKey(profileID)) {
                 json = anonDataPerResource.get(profileID);
@@ -884,7 +929,7 @@ public class PrivacyMechanisms implements RDSAnonI {
             JSONObject valueReference = (JSONObject) provenanceExtension.get("valueReference");
             if(valueReference.has("reference")) {
                 oldID = valueReference.get("reference").toString();
-                provenanceExtensionID = keepOnlyID(oldID);;
+                provenanceExtensionID = keepOnlyID(oldID);
                 createNewID(oldID);
             }
         }
